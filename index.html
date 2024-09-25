@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sauver Toto</title>
+    <style>
+        body {
+            background-image: url('1.jpg');
+            background-size: cover;
+            text-align: center;
+            color: white;
+            font-family: 'Arial Rounded MT Bold', sans-serif; /* Police plus ronde */
+            cursor: url('2.png'), auto; /* Le curseur est maintenant visible sur toute la page */
+            margin: 0; /* Enlève les marges par défaut du corps */
+            padding: 0; /* Enlève les remplissages par défaut du corps */
+        }
+        h1 {
+            font-size: 30px;
+            width: 60%;
+            margin: 50px auto 20px;
+        }
+        #saveButton {
+            padding: 30px;
+            font-size: 26px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #saveButtonContainer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #choiceBox {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            font-size: 24px;
+            text-align: center;
+            width: 60%;
+            margin: 0 auto;
+            display: none;
+        }
+        .choice {
+            display: block;
+            margin: 10px;
+            padding: 10px;
+            background-color: yellow;
+            color: black;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .black-screen {
+            font-size: 36px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .restartButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 20px;
+            background-color: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        iframe {
+            width: 100vw; /* Largeur ajustée pour remplir presque tout l'écran */
+            height: calc(100vh - 120px); /* Hauteur ajustée en tenant compte de l'espace pour le titre et le bouton */
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Titre et bouton du début -->
+    <h1>Toto est prisonnière de sa cage, QUELLE HONTE ! Le NFB doit redonner la liberté à ce petit hamster !</h1>
+    <div id="saveButtonContainer">
+        <button id="saveButton">Sauver Toto</button>
+    </div>
+
+    <!-- Boîte de dialogue pour les choix -->
+    <div id="choiceBox">
+        <p id="situationText"></p>
+        <div id="choice1" class="choice"></div>
+        <div id="choice2" class="choice"></div>
+    </div>
+
+    <audio id="backgroundMusic" src="1.mp3"></audio>
+
+    <script>
+        let currentStep = 0;
+        const situations = [
+            {
+                text: "Afin de chercher une sortie, Toto décide de prendre son destin en main :",
+                choice1: "Elle contourne sa roue",
+                choice2: "Elle traverse son bol d’eau."
+            },
+            {
+                text: "Oh… On dirait qu’il n’y a aucune issue… Mais Toto ignore ses larmes et décide de ne pas se laisser faire :",
+                choice1: "Elle tente de sauter par dessus la cage.", // Inversion des choix
+                choice2: "Elle ronge les barreaux."
+            },
+            {
+                text: "Toto est trop lourde car son humain la gave de graines de tournesol. Une larme roule sur sa fourrure mais elle ne se laisse pas abattre !",
+                choice1: "Elle creuse dans sa cage.",
+                choice2: "Elle utilise sa litière comme trampoline."
+            }
+        ];
+
+        document.getElementById('saveButton').addEventListener('click', function() {
+            // Jouer la musique
+            document.getElementById('backgroundMusic').play();
+
+            // Masquer le bouton et montrer la première situation
+            document.getElementById('saveButtonContainer').style.display = 'none';
+            showSituation();
+        });
+
+        function showSituation() {
+            if (currentStep < situations.length) {
+                document.getElementById('choiceBox').style.display = 'block';
+                document.getElementById('situationText').innerText = situations[currentStep].text;
+                document.getElementById('choice1').innerText = situations[currentStep].choice1;
+                document.getElementById('choice2').innerText = situations[currentStep].choice2;
+
+                document.getElementById('choice1').onclick = handleChoice1;
+                document.getElementById('choice2').onclick = handleChoice2;
+            }
+        }
+
+        function handleChoice1() {
+            if (currentStep === 0) {
+                // Passer à l'étape suivante
+                currentStep++;
+                showSituation();
+            } else if (currentStep === 1) {
+                // Si "sauter", passer à l'étape suivante
+                currentStep++;
+                showSituation();
+            } else if (currentStep === 2) {
+                // Si creuser, afficher la fin tragique
+                showBlackScreen("Elle ne se laisse pas abattre et décide de s’abattre toute seule. Toto décide d’en finir et creuse sa propre tombe.", 3000, true);
+            }
+        }
+
+        function handleChoice2() {
+            if (currentStep === 0) {
+                // Fin tragique "Toto s’est noyée."
+                showBlackScreen("Toto s’est noyée.", 3000, true);
+            } else if (currentStep === 1) {
+                // Fin tragique "Le plastique c’est toxique."
+                showBlackScreen("Le plastique c’est toxique. Toto meurt d’intoxication.", 3000, true);
+            } else if (currentStep === 2) {
+                // Succès de l'évasion
+                showBlackScreen("Liberté !!!", 4000, false, function() {
+                    showBlackScreen("BOUM", 4000, false, function() {
+                        showBlackScreen("Toto a réussi à s’envoler quelques secondes, avant de s’écraser de tout son poids sur le plancher.", 4000, false, function() {
+                            showBlackScreen("Toto était en sécurité à l’intérieur de sa cage. Vous n’avez fait que la propulser vers la mort …", 4000, false, function() {
+                                // Afficher la page RIP et la vidéo
+                                document.body.innerHTML = '<h1>RIP TOTO</h1><iframe src="https://www.youtube.com/embed/ag5aOVRBpa4?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+                            });
+                        });
+                    });
+                });
+            }
+        }
+
+        function showBlackScreen(message, duration, isFatal, callback) {
+            document.body.style.background = 'black';
+            document.body.innerHTML = '<div class="black-screen"><h1>' + message + '</h1></div>';
+            setTimeout(function() {
+                if (callback) {
+                    callback();
+                } else if (isFatal) {
+                    // Lancer la vidéo et afficher le bouton "Recommencer" après une mauvaise fin
+                    document.body.innerHTML = '<h1>' + message + '</h1><iframe src="https://www.youtube.com/embed/ag5aOVRBpa4?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe><button class="restartButton" onclick="restartGame()">Recommencer</button>';
+                }
+            }, duration);
+        }
+
+        function restartGame() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>
